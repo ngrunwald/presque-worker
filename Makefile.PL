@@ -3,7 +3,11 @@ name 'presque-worker';
 all_from 'lib/presque/worker.pm';
 readme_from 'lib/presque/worker.pm';
 
-# requires '';
+requires 'Moose';
+requires 'AnyEvent';
+requires 'AnyEvent::HTTP';
+requires 'JSON';
+requires 'Try::Tiny';
 
 tests 't/*.t';
 
