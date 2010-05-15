@@ -5,8 +5,7 @@ use Moose::Role;
 has fork_dispatcher => (
     is        => 'ro',
     isa       => 'Bool',
-    default   => 1,
-    predicate => 'has_fork_dispatcher'
+    default   => 0,
 );
 
 1;

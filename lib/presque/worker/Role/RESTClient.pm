@@ -39,13 +39,14 @@ sub rest_register_worker {
 
 sub rest_unregister_worker {
     my $self = shift;
-    my $request = HTTP::Request->new(DELETE => $self->_worker_uri);
-    $request->query_path(worker_id => $self->worker_id);
+    my $uri  = $self->_worker_uri;
+    $uri->query_form(worker_id => $self->worker_id);
+    my $request = HTTP::Request->new(DELETE => $uri);
     my $res = $self->ua->request($request);
 }
 
 sub rest_fetch_job {
-    my ($self,) = @_;
+    my $self = shift;
 
     my $res = $self->ua->request(HTTP::Request->new(GET => $self->_job_uri));
     if ($res->is_success) {
@@ -57,20 +58,23 @@ sub rest_fetch_job {
             message => $res->code . ':' . $res->message
         );
     }
+    return;
 }
 
 sub rest_retry_job {
     my ($self, $job) = @_;
 
     my $request = HTTP::Request->new(PUT => $self->_job_uri);
+    $request->header('Content-Type' => 'application/json');
     $request->content(JSON::encode_json($job));
     my $res = $self->ua->request($request);
     if (!$res->is_success) {
+        use YAML::Syck; warn Dump $res;
         $self->logger->log(
             level   => 'error',
             message => 'failed to update job ('
               . $res->code . ':'
-              . $res->reason . ')',
+              . $res->message . ')',
         );
     }
 }
