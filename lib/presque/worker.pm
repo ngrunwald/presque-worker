@@ -13,6 +13,7 @@ with qw/
   presque::worker::Role::Management
   presque::worker::Role::Dispatcher
   presque::worker::Role::RESTClient
+  presque::worker::Role::Job
   presque::worker::Role::Logger/;
 
 has queue_name => (is => 'ro', isa => 'Str', required => 1);
