@@ -69,7 +69,6 @@ sub rest_retry_job {
     $request->content(JSON::encode_json($job));
     my $res = $self->ua->request($request);
     if (!$res->is_success) {
-        use YAML::Syck; warn Dump $res;
         $self->logger->log(
             level   => 'error',
             message => 'failed to update job ('

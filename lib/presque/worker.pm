@@ -11,12 +11,11 @@ requires 'work';
 
 with qw/
   presque::worker::Role::Management
-  presque::worker::Role::Fork
+  presque::worker::Role::Dispatcher
   presque::worker::Role::RESTClient
   presque::worker::Role::Logger/;
 
 has queue_name => (is => 'ro', isa => 'Str', required => 1);
-has retries    => (is => 'rw', isa => 'Int', default  => 5);
 has interval   => (is => 'ro', isa => 'Int', lazy     => 1, default => 1);
 has _fail_method => (
     is        => 'rw',
@@ -36,47 +35,11 @@ has worker_id => (
     }
 );
 
-before start => sub {
+after new => sub {
     my $self = shift;
-
     if ($self->meta->find_method_by_name('fail')) {
         $self->fail_method(1);
     }
-
-    $self->logger->log(
-        level   => 'info',
-        message => "presque worker ["
-          . $self->worker_id
-          . "] : start to listen for "
-          . $self->queue_name
-    );
-};
-
-around work => sub {
-    my ($orig, $self, $job) = @_;
-    $self->logger->log(
-        level   => 'debug',
-        message => $self->worker_id . " start to work"
-    );
-
-    try {
-        if ($self->fork_dispatcher) {
-            my $fork = fork();
-            if ($fork == 0) {
-                $self->$orig($job);
-            }elsif($fork > 0){
-                return;
-            }else{
-            }
-        }
-    }catch{
-        my $err = $_;
-        $self->logger->log(
-            level   => 'error',
-            message => 'Job failed: ' . $err,
-        );
-        $self->_job_failure($job, $err);
-    };
 };
 
 sub start {
@@ -87,15 +50,6 @@ sub start {
         $self->work($job) if $job;
         sleep($self->interval);
     }
-}
-
-sub _job_failure {
-    my ($self, $job, $err) = @_;
-    push @{$job->{fail}}, $err;
-    my $retries = ($job->{retries_left} || $self->retries) - 1;
-    $job->{retries_left} = $retries;
-    $self->rest_retry_job($job) if $retries > 0;
-    $self->fail($job, $_) if $self->_has_fail_method;
 }
 
 1;

@@ -9,9 +9,8 @@ with 'presque::worker';
 use YAML::Syck;
 sub work {
     my ($self, $job) = @_;
-    warn ">>>je suis $$\n";
     warn Dump $job;
-    sleep(100);
+    sleep(5);
 }
 
 package main;

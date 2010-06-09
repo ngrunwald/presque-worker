@@ -21,4 +21,48 @@ has logger => (
     }
 );
 
+before start => sub {
+    my $self = shift;
+
+    $self->logger->log(
+        level   => 'info',
+        message => "presque worker ["
+          . $self->worker_id
+          . "] : start to listen for "
+          . $self->queue_name
+    );
+};
+
+before work => sub {
+    my $self = shift;
+    $self->logger->log(
+        level   => 'debug',
+        message => $self->worker_id . ' start to work',
+    );
+};
+
+before _shutdown => sub {
+    my $self = shift;
+    $self->logger->log(
+        level   => 'info',
+        message => 'worker ' . $self->worker_id . ' shuting down'
+    );
+};
+
+before _graceful_shutdown => sub {
+    my $self = shift;
+    $self->logger->log(
+        level   => 'info',
+        message => 'worker ' . $self->worker_id . ' kill child'
+    );
+};
+
+before _kill_child => sub {
+    my $self = shift;
+    $self->logger->log(
+        level   => 'info',
+        message => 'worker ' . $self->worker_id . ' shuting down gracefuly'
+    );
+};
+
 1;
