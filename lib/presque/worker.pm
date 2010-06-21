@@ -54,6 +54,7 @@ sub start {
 }
 
 sub idle {
+    my $self = shift;
     sleep($self->interval);
 }
 
