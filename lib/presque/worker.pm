@@ -48,9 +48,13 @@ sub start {
 
     while (!$self->shut_down) {
         my $job = $self->rest_fetch_job();
-        $self->work($job) if $job;
-        sleep($self->interval);
+        $job ? $self->work($job) : $self->idle();
+
     }
+}
+
+sub idle {
+    sleep($self->interval);
 }
 
 1;
