@@ -6,7 +6,7 @@ has shut_down => (is => 'rw', isa => 'Bool', default => 0,);
 
 before start => sub {
     my $self = shift;
-    $self->rest_register_worker;
+    $self->register_worker(worker_id => $self->worker_id);
     $SIG{INT}  = sub { $self->_shutdown };
     $SIG{TERM} = sub { $self->_shutdown };
     $SIG{QUIT} = sub { $self->_graceful_shutdown };
@@ -14,9 +14,18 @@ before start => sub {
     $SIG{CHLD} = 'IGNORE';
 };
 
-after start              => sub { (shift)->rest_unregister_worker; };
-after _graceful_shutdown => sub { (shift)->rest_unregister_worker; };
-after _shutdown          => sub { (shift)->rest_unregister_worker; };
+after start => sub {
+    my $self = shift;
+    $self->unregister_worker(worker_id => $self->worker_id);
+};
+after _graceful_shutdown => sub {
+    my $self = shift;
+    $self->unregister_worker(worker_id => $self->worker_id);
+};
+after _shutdown => sub {
+    my $self = shift;
+    $self->unregister_worker(worker_id => $self->worker_id);
+};
 
 sub _shutdown {
     my $self = shift;

@@ -9,7 +9,12 @@ sub _job_failure {
     push @{$job->{fail}}, $err;
     my $retries = ($job->{retries_left} || $self->job_retries) - 1;
     $job->{retries_left} = $retries;
-    $self->rest_retry_job($job) if $retries > 0;
+    try {
+        $self->retry_job(queue_name => '', $job) if $retries > 0;
+    }
+    catch {
+        # XXX
+    };
     $self->fail($job, $_) if $self->_has_fail_method;
 }
 
