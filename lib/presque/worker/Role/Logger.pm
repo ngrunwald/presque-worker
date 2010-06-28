@@ -16,7 +16,7 @@ has logger => (
             foreach my $log_type (keys %{$log_conf}) {
                 my $log_engine = $self->_load_log_engine($log_type);
                 my $_logger =
-                  $log_engine->new(%{$self->context->{log}->{$log_type}});
+                  $log_engine->new(%{$self->context->{logger}->{$log_type}});
                 $logger->add($_logger);
             }
         }

@@ -10,7 +10,7 @@ sub _job_failure {
     my $retries = ($job->{retries_left} || $self->job_retries) - 1;
     $job->{retries_left} = $retries;
     try {
-        $self->retry_job(queue_name => '', $job) if $retries > 0;
+        $self->retry_job(queue_name => $self->queue_name, $job) if $retries > 0;
     }
     catch {
         # XXX
