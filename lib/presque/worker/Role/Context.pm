@@ -7,14 +7,14 @@ use Moose::Util::TypeConstraints;
 
 subtype 'Context' => as 'HashRef';
 
-coerce 'Context' => from 'Str' => via { Load $_; };
+coerce 'Context' => from 'Str' => via { YAML::LoadFile $_; };
 
 has context => (
     is      => 'rw',
     isa     => 'Context',
     lazy    => 1,
     coerce  => 1,
-    default => {{}},
+    default => sub {{}},
 );
 
 1;
