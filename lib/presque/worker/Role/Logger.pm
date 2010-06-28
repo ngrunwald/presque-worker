@@ -21,7 +21,7 @@ has logger => (
             }
         }
         else {
-            $log->add(
+            $logger->add(
                 Log::Dispatch::Screen->new(
                     name      => 'screen',
                     min_level => 'debug',
@@ -29,7 +29,7 @@ has logger => (
                 )
             );
         }
-        $log;
+        $logger;
     }
 );
 

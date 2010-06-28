@@ -69,7 +69,6 @@ has rest_client => (
           Net::Presque->new(api_base_url => $self->context->{rest}->{url});
         $client;
     },
-
     handles => {
         pull              => 'fetch_job',
         retry_job         => 'failed_job',
