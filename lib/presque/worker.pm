@@ -18,8 +18,30 @@ with qw/
   presque::worker::Role::Context
   presque::worker::Role::Logger/;
 
-has queue_name => (is => 'ro', isa => 'Str', required => 1);
-has interval   => (is => 'ro', isa => 'Int', lazy     => 1, default => 1);
+has queue_name => (
+    is      => 'rw',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        if ($self->context->{queue_name}) {
+            return $self->context->{queue_name};
+        }
+        die "queue_name is missing!";
+    }
+);
+has interval => (
+    is      => 'rw',
+    isa     => 'Int',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        if ($self->context->{interval}) {
+            return $self->context->{interval};
+        }
+        return 1;
+    }
+);
 has _fail_method => (
     is        => 'rw',
     isa       => 'Bool',
@@ -47,6 +69,7 @@ has rest_client => (
           Net::Presque->new(api_base_url => $self->context->{rest}->{url});
         $client;
     },
+
     handles => {
         pull              => 'fetch_job',
         retry_job         => 'failed_job',
@@ -67,7 +90,7 @@ sub start {
 
     while (!$self->shut_down) {
         my $job = try {
-            $self->pull(queue_name => '', worker_id => $self->worker_id);
+            $self->pull(queue_name => $self->queue_name, worker_id => $self->worker_id);
         };
         $job ? $self->work($job) : $self->idle();
     }
