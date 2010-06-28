@@ -66,7 +66,7 @@ has rest_client => (
     default => sub {
         my $self = shift;
         my $client =
-          Net::Presque->new(api_base_url => $self->context->{rest}->{url});
+          Net::Presque->new(api_base_url => $self->context->{presque}->{url});
         $client;
     },
     handles => {
