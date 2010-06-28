@@ -6,7 +6,7 @@ has shut_down => (is => 'rw', isa => 'Bool', default => 0,);
 
 before start => sub {
     my $self = shift;
-    $self->register_worker(worker_id => $self->worker_id);
+    $self->register_worker(queue_name => worker_id => $self->worker_id);
     $SIG{INT}  = sub { $self->_shutdown };
     $SIG{TERM} = sub { $self->_shutdown };
     $SIG{QUIT} = sub { $self->_graceful_shutdown };
@@ -16,7 +16,7 @@ before start => sub {
 
 after start => sub {
     my $self = shift;
-    $self->register_worker(
+    $self->unregister_worker(
         queue_name => $self->queue_name,
         worker_id  => $self->worker_id
     );
