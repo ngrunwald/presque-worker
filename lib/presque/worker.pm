@@ -88,8 +88,15 @@ sub start {
     my $self = shift;
 
     while (!$self->shut_down) {
-        my $job = try {
-            $self->pull(queue_name => $self->queue_name, worker_id => $self->worker_id);
+        my $job;
+        try {
+            $job = $self->pull(
+                queue_name => $self->queue_name,
+                worker_id  => $self->worker_id,
+            );
+        }
+        catch {
+            $self->logger->error($_);
         };
         $job ? $self->work($job) : $self->idle();
     }
