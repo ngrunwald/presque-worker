@@ -96,7 +96,7 @@ sub start {
             );
         }
         catch {
-            $self->logger->error($_);
+            $self->logger->error($_) if $_->http_error->code != 404;
         };
         $job ? $self->work($job) : $self->idle();
     }
