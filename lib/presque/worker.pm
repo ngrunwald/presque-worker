@@ -64,9 +64,11 @@ has rest_client => (
     isa     => 'Net::Presque',
     lazy    => 1,
     default => sub {
-        my $self = shift;
-        my $client =
-          Net::Presque->new(api_base_url => $self->context->{presque}->{url});
+        my $self   = shift;
+        my $client = Net::Presque->new(
+            api_base_url => $self->context->{presque}->{url},
+            worker_id    => $self->worker_id
+        );
         $client;
     },
     handles => {

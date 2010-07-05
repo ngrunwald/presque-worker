@@ -18,21 +18,18 @@ after start => sub {
     my $self = shift;
     $self->unregister_worker(
         queue_name => $self->queue_name,
-        worker_id  => $self->worker_id
     );
 };
 after _graceful_shutdown => sub {
     my $self = shift;
     $self->unregister_worker(
         queue_name => $self->queue_name,
-        worker_id  => $self->worker_id
     );
 };
 after _shutdown => sub {
     my $self = shift;
     $self->unregister_worker(
         queue_name => $self->queue_name,
-        worker_id  => $self->worker_id
     );
 };
 
