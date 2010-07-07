@@ -79,7 +79,7 @@ has rest_client => (
     }
 );
 
-after new => sub {
+before start => sub {
     my $self = shift;
     if ($self->meta->find_method_by_name('fail')) {
         $self->fail_method(1);
