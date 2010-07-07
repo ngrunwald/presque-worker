@@ -94,7 +94,6 @@ sub start {
         try {
             $job = $self->pull(
                 queue_name => $self->queue_name,
-                worker_id  => $self->worker_id,
             );
         }
         catch {
