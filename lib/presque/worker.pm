@@ -59,6 +59,11 @@ has worker_id => (
         $name;
     }
 );
+has base_uri => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1
+);
 has rest_client => (
     is      => 'rw',
     isa     => 'Net::Presque',
@@ -66,7 +71,7 @@ has rest_client => (
     default => sub {
         my $self   = shift;
         my $client = Net::Presque->new(
-            api_base_url => $self->context->{presque}->{url},
+            api_base_url => $self->context->{presque}->{url} || $self->base_uri,
             worker_id    => $self->worker_id
         );
         $client;
